@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Visit Check-In · Sales Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══ VARIABLES ══════════════════════════════════════════════════ */
+:root {
+  --b1:#0a1f44; --b2:#1a4fba; --b3:#3b82f6; --b4:#bfdbfe;
+  --g1:#064e3b; --g2:#059669; --g3:#34d399; --g4:#d1fae5;
+  --w:#ffffff; --gray:#64748b; --glt:#f1f5f9; --gbd:#e2e8f0;
+  --red:#ef4444; --rs:10px; --sh:0 4px 24px rgba(10,31,68,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+/* ══ BODY ═══════════════════════════════════════════════════════ */
+body {
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  background:linear-gradient(160deg,var(--b1) 0%,#0f3275 35%,#0d6e5c 75%,var(--g1) 100%);
+  padding:0 0 60px;
+}
+
+/* ══ HEADER ═════════════════════════════════════════════════════ */
+.hdr { padding:32px 20px 20px; text-align:center; }
+.hdr-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
+  border-radius:30px; padding:6px 16px;
+  color:rgba(255,255,255,.85); font-size:12px; font-weight:500;
+  letter-spacing:.5px; margin-bottom:14px; backdrop-filter:blur(8px);
+}
+.hdr-badge .live-dot {
+  width:7px;height:7px;border-radius:50%;
+  background:var(--g3);display:inline-block;
+  animation:pulse 1.8s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hdr h1 {
+  font-family:'Nunito',sans-serif; font-size:28px; font-weight:900;
+  color:var(--w); letter-spacing:-.5px;
+  text-shadow:0 2px 12px rgba(0,0,0,.25); line-height:1.1;
+}
+.hdr p { color:rgba(255,255,255,.65); font-size:13px; margin-top:6px; font-weight:300; }
+.chips { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+.chip {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15);
+  border-radius:20px; padding:4px 12px;
+  color:rgba(255,255,255,.8); font-size:11px; font-weight:500;
+  backdrop-filter:blur(6px);
+}
+.chip .dot{width:6px;height:6px;border-radius:50%;}
+.d-blue{background:var(--b3);} .d-green{background:var(--g3);} .d-yellow{background:#fbbf24;}
+
+/* ══ CARD ═══════════════════════════════════════════════════════ */
+.card {
+  background:var(--w); border-radius:24px 24px 0 0;
+  margin:0 12px; padding:28px 20px;
+  box-shadow:var(--sh); animation:slideUp .5s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.card::before {
+  content:''; display:block; width:40px; height:4px;
+  background:var(--gbd); border-radius:4px; margin:0 auto 24px;
+}
+
+/* ══ VISIT ID ═══════════════════════════════════════════════════ */
+.visit-id {
+  display:inline-flex; align-items:center; gap:6px;
+  background:linear-gradient(135deg,var(--b1),var(--b2));
+  color:var(--w); padding:5px 14px; border-radius:20px;
+  font-size:12px; font-weight:700; letter-spacing:.5px; margin-bottom:20px;
+}
+
+/* ══ DATETIME GRID ══════════════════════════════════════════════ */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* ══ SECTION TITLES ═════════════════════════════════════════════ */
+.sec {display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.sec-icon {
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;
+}
+.si-blue{background:var(--b4);} .si-green{background:var(--g4);} .si-purple{background:#ede9fe;}
+.sec h2{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--b1);letter-spacing:-.2px;}
+.sec p{font-size:11px;color:var(--gray);margin-top:1px;}
+
+/* ══ FORM ELEMENTS ══════════════════════════════════════════════ */
+.fg{margin-bottom:14px;}
+.fg label {
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;color:var(--gray);
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;
+}
+.req{color:var(--red);}
+.tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.3px;}
+.ta{background:var(--b4);color:var(--b2);}
+.tg{background:var(--g4);color:var(--g1);}
+
+input[type=text],textarea,select {
+  width:100%; padding:12px 14px;
+  border:1.5px solid var(--gbd); border-radius:var(--rs);
+  font-family:'DM Sans',sans-serif; font-size:14px; color:var(--b1);
+  background:var(--glt); outline:none;
+  transition:border .2s,box-shadow .2s,background .2s;
+}
+input:focus,textarea:focus,select:focus {
+  border-color:var(--b3);
+  box-shadow:0 0 0 3px rgba(59,130,246,.12);
+  background:var(--w);
+}
+
+/* auto display field */
+.af {
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px; border:1.5px solid var(--gbd);
+  border-radius:var(--rs); background:var(--glt); min-height:46px;
+}
+.af-icon{font-size:16px;flex-shrink:0;}
+.af-val{flex:1;font-size:13px;color:var(--b1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.af-val.mt{color:var(--gray);font-weight:400;font-style:italic;}
+.af-val.wrap{white-space:normal;line-height:1.5;}
+.spin{width:14px;height:14px;border:2px solid var(--gbd);border-top-color:var(--b3);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;display:none;}
+.spin.on{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ CAMERA ═════════════════════════════════════════════════════ */
+.cam-wrap {
+  border:2px dashed var(--b3); border-radius:var(--rs);
+  background:#eff6ff; overflow:hidden; position:relative;
+  aspect-ratio:3/4; cursor:pointer;
+}
+.cam-wrap video,.cam-wrap img.prev{width:100%;height:100%;object-fit:cover;display:none;}
+.cam-wrap video.on,.cam-wrap img.prev.on{display:block;}
+.cam-ph {
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;color:var(--b2);pointer-events:none;
+}
+.cam-ph .ci{font-size:44px;}
+.cam-ph p{font-size:13px;font-weight:600;}
+.cam-ph small{font-size:11px;opacity:.6;}
+.cam-acts {
+  position:absolute;bottom:0;left:0;right:0;padding:10px 14px;
+  background:linear-gradient(transparent,rgba(0,0,0,.55));
+  display:none;gap:8px;justify-content:center;
+}
+.cam-acts.on{display:flex;}
+.cbtn{padding:8px 20px;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:transform .15s;}
+.cbtn:active{transform:scale(.94);}
+.cbtn-cap{background:var(--w);color:var(--b1);}
+.cbtn-ret{background:rgba(255,255,255,.2);color:var(--w);border:1px solid rgba(255,255,255,.35);}
+.cap-badge{position:absolute;top:10px;right:10px;background:var(--g2);color:var(--w);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;display:none;}
+.cap-badge.on{display:block;}
+
+/* selfie confirm strip */
+.selfie-strip{display:none;align-items:center;gap:10px;padding:8px 14px;background:var(--g4);border-radius:var(--rs);margin-top:8px;}
+.selfie-strip.on{display:flex;}
+.s-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;border:2px solid var(--g2);}
+.s-info{font-size:11px;}
+.s-info strong{display:block;color:var(--g1);font-weight:700;}
+.s-info span{color:var(--gray);}
+
+/* ══ DIVIDER ════════════════════════════════════════════════════ */
+.div{height:1px;background:var(--gbd);margin:20px 0;}
+
+/* ══ ERROR ══════════════════════════════════════════════════════ */
+.err{display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--rs);padding:11px 14px;font-size:12px;color:#b91c1c;font-weight:500;margin-top:14px;}
+.err.on{display:block;}
+
+/* ══ SUBMIT BUTTON ══════════════════════════════════════════════ */
+.sub-btn {
+  width:100%; padding:16px; border:none; border-radius:var(--rs);
+  font-family:'Nunito',sans-serif; font-size:16px; font-weight:800;
+  color:var(--w);
+  background:linear-gradient(135deg,var(--b1) 0%,var(--b2) 50%,var(--g2) 100%);
+  box-shadow:0 4px 20px rgba(26,79,186,.35); cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .2s,box-shadow .2s; position:relative; overflow:hidden;
+  letter-spacing:.3px; margin-top:6px;
+}
+.sub-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.08));}
+.sub-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,79,186,.4);}
+.sub-btn:active{transform:translateY(0);}
+.sub-btn:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+.btn-spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.35);border-top-color:var(--w);border-radius:50%;animation:spin .7s linear infinite;display:none;}
+.btn-spin.on{display:block;}
+
+/* ══ STATUS DOTS ════════════════════════════════════════════════ */
+.status-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;}
+.st{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--gbd);transition:background .3s;}
+.sdot.ok{background:var(--g2);}
+.sdot.err{background:var(--red);}
+
+/* ══ MODAL ══════════════════════════════════════════════════════ */
+.m-bg {
+  position:fixed;inset:0;background:rgba(10,31,68,.6);
+  backdrop-filter:blur(6px);z-index:999;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.m-bg.on{opacity:1;pointer-events:all;}
+.modal {
+  background:var(--w);border-radius:24px;padding:32px 24px;
+  max-width:360px;width:100%;
+  transform:scale(.88) translateY(24px);
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 24px 60px rgba(0,0,0,.35);text-align:center;
+}
+.m-bg.on .modal{transform:scale(1) translateY(0);}
+.m-icon {
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--b4),var(--g4));
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;margin:0 auto 16px;
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.modal h2{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--b1);margin-bottom:4px;}
+.modal .sub{font-size:13px;color:var(--gray);margin-bottom:20px;}
+.m-rows{background:var(--glt);border-radius:var(--rs);padding:14px;text-align:left;margin-bottom:20px;}
+.mrow{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--gbd);gap:10px;}
+.mrow:last-child{border-bottom:none;}
+.mrow .ml{font-size:11px;color:var(--gray);font-weight:500;flex-shrink:0;}
+.mrow .mv{font-size:13px;color:var(--b1);font-weight:700;text-align:right;max-width:210px;word-break:break-word;}
+.m-close {
+  width:100%;padding:14px;border:none;border-radius:var(--rs);
+  background:linear-gradient(135deg,var(--b1),var(--b2));
+  color:var(--w);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;
+  cursor:pointer;transition:opacity .2s;
+}
+.m-close:hover{opacity:.9;}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════ -->
+<div class="hdr">
+  <div class="hdr-badge"><span class="live-dot"></span> Live Field Tracking</div>
+  <h1>📍 Visit Check-In</h1>
+  <p>Sales Team · Field Visit Attendance System</p>
+  <div class="chips">
+    <div class="chip"><div class="dot d-blue"></div> GPS Location</div>
+    <div class="chip"><div class="dot d-green"></div> Live Camera</div>
+    <div class="chip"><div class="dot d-yellow"></div> Auto Data Capture</div>
+  </div>
+</div>
+
+<!-- ══ CARD ════════════════════════════════════════════════════ -->
+<div class="card">
+
+  <!-- Visit ID -->
+  <div class="visit-id" id="visitId">🆔 Generating…</div>
+
+  <!-- Date & Time -->
+  <div class="grid2" style="margin-bottom:14px;">
+    <div class="fg" style="margin-bottom:0;">
+      <label>📅 Date <span class="tag ta">Auto</span></label>
+      <div class="af"><span class="af-icon">📅</span><span class="af-val" id="dispDate">—</span></div>
+    </div>
+    <div class="fg" style="margin-bottom:0;">
+      <label>🕐 Time <span class="tag ta">Auto</span></label>
+      <div class="af"><span class="af-icon">🕐</span><span class="af-val" id="dispTime">—</span></div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Employee Details -->
+  <div class="sec">
+    <div class="sec-icon si-blue">👤</div>
+    <div><h2>Employee Details</h2><p>Your name for this visit</p></div>
+  </div>
+
+  <div class="fg">
+    <label>Employee Name <span class="req">*</span></label>
+    <input type="text" id="empName" placeholder="Your full name" autocomplete="name" />
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Visit Information -->
+  <div class="sec">
+    <div class="sec-icon si-green">🏢</div>
+    <div><h2>Visit Information</h2><p>Details about today's client visit</p></div>
+  </div>
+
+  <div class="fg">
+    <label>Company <span class="req">*</span></label>
+    <input type="text" id="company" placeholder="Client company name" />
+  </div>
+
+  <div class="fg">
+    <label>Contact Person</label>
+    <input type="text" id="contactPerson" placeholder="Name of person you're meeting" />
+  </div>
+
+  <div class="fg">
+    <label>Visit Address <span class="req">*</span></label>
+    <input type="text" id="visitAddress" placeholder="Full address of visit location" />
+  </div>
+
+  <div class="fg">
+    <label>Visit Purpose <span class="req">*</span></label>
+    <select id="visitPurpose" onchange="toggleOthers(this.value)">
+      <option value="">— Select Purpose —</option>
+      <option value="Lead Generation">🎯 Lead Generation</option>
+      <option value="Follow-up">🔄 Follow-up</option>
+      <option value="Presentation">📊 Presentation</option>
+      <option value="Requirement Discussion">💬 Requirement Discussion</option>
+      <option value="Payment Collection">💰 Payment Collection</option>
+      <option value="Negotiation">🤝 Negotiation</option>
+      <option value="Deal Closing">✅ Deal Closing</option>
+      <option value="Others">📝 Others</option>
+    </select>
+  </div>
+
+  <!-- Others free text — hidden unless Others selected -->
+  <div class="fg" id="othersBox" style="display:none;">
+    <label>Specify Purpose <span class="req">*</span></label>
+    <input type="text" id="visitPurposeOther" placeholder="Please describe the visit purpose…" />
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Location (only visible auto field) -->
+  <div class="sec">
+    <div class="sec-icon si-green">📍</div>
+    <div><h2>Your Current Location</h2><p>Auto-detected via GPS</p></div>
+  </div>
+
+  <div class="fg">
+    <div class="af" style="align-items:flex-start;padding:12px 14px;gap:10px;min-height:52px;">
+      <span class="af-icon" style="margin-top:2px;">📍</span>
+      <span class="af-val mt wrap" id="dispLoc">Detecting your location…</span>
+      <div class="spin on" id="locSpin"></div>
+    </div>
+  </div>
+
+  <!-- Hidden auto-captured fields (not shown to user) -->
+  <input type="hidden" id="hidLat" />
+  <input type="hidden" id="hidLng" />
+  <input type="hidden" id="hidIP" />
+  <input type="hidden" id="hidBattery" />
+  <input type="hidden" id="hidSelfieName" />
+  <input type="hidden" id="hidFingerprint" />
+
+  <div class="div"></div>
+
+  <!-- Live Selfie -->
+  <div class="sec">
+    <div class="sec-icon si-purple">📸</div>
+    <div><h2>Live Selfie <span class="req">*</span></h2><p>Front camera only · No upload option</p></div>
+  </div>
+
+  <div class="cam-wrap" id="camWrap" onclick="startCam()">
+    <video id="vid" autoplay playsinline></video>
+    <img class="prev" id="prev" alt="selfie" />
+    <div class="cam-ph" id="camPh">
+      <div class="ci">📸</div>
+      <p>Tap to Open Camera</p>
+      <small>Front-facing · Live only</small>
+    </div>
+    <div class="cam-acts" id="camActs">
+      <button class="cbtn cbtn-cap" onclick="capture(event)">📸 Capture</button>
+      <button class="cbtn cbtn-ret" onclick="retake(event)">🔄 Retake</button>
+    </div>
+    <div class="cap-badge" id="capBadge">✔ Captured</div>
+  </div>
+
+  <div class="selfie-strip" id="selfieStrip">
+    <img class="s-thumb" id="selfieThumb" src="" alt="selfie preview" />
+    <div class="s-info">
+      <strong id="selfieNameDisp">—</strong>
+      <span>Selfie ready · Will be saved to Drive</span>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Error message -->
+  <div class="err" id="errBox"></div>
+
+  <!-- Submit -->
+  <button class="sub-btn" id="submitBtn" onclick="doSubmit()">
+    <span id="btnTxt">✅ Submit Visit Check-In</span>
+    <div class="btn-spin" id="btnSpin"></div>
+  </button>
+
+  <!-- Status dots -->
+  <div class="status-row">
+    <div class="st"><div class="sdot" id="stCam"></div> Camera</div>
+    <div class="st"><div class="sdot" id="stLoc"></div> Location</div>
+    <div class="st"><div class="sdot" id="stIP"></div> Network</div>
+  </div>
+
+</div><!-- /card -->
+
+<!-- ══ CONFIRMATION MODAL ═══════════════════════════════════════ -->
+<div class="m-bg" id="modalBg">
+  <div class="modal">
+    <div class="m-icon">✅</div>
+    <h2>Check-In Successful!</h2>
+    <p class="sub">Your visit has been recorded. Selfie saved to Drive.</p>
+    <div class="m-rows" id="modalRows"></div>
+    <button class="m-close" onclick="closeModal()">Done · Next Visit</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  CONFIGURATION — paste your Apps Script Web App URL below
+// ════════════════════════════════════════════════════════════════
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+// ════════════════════════════════════════════════════════════════
+
+// State
+let ipAddr = '', locationName = '', deviceFingerprint = '';
+let currentLat = '', currentLng = '';
+let batteryLevel = null, batteryCharging = false;
+let camStream = null, camActive = false, photoTaken = false;
+let selfieBlob = null;
+
+// ── ON LOAD ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  genID();
+  tick();
+  setInterval(tick, 1000);
+  getIP();
+  getBattery();
+  getLocation();
+  genFingerprint(); // also auto-fills name if returning device
+});
+
+// ── VISIT ID ─────────────────────────────────────────────────────
+function genID() {
+  const n = new Date();
+  const id = 'VIS-' +
+    n.getFullYear().toString().slice(2) +
+    pad(n.getMonth()+1) + pad(n.getDate()) + '-' +
+    pad(n.getHours()) + pad(n.getMinutes()) + pad(n.getSeconds());
+  document.getElementById('visitId').textContent = '🆔 ' + id;
+  return id;
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+
+// ── CLOCK ─────────────────────────────────────────────────────────
+function tick() {
+  const n = new Date();
+  document.getElementById('dispDate').textContent =
+    n.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('dispTime').textContent =
+    n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ── DEVICE FINGERPRINT (stable unique ID per device) ─────────────
+function genFingerprint() {
+  try {
+    const nav = window.navigator;
+    const scr = window.screen;
+    const raw = [
+      nav.userAgent, nav.language,
+      nav.languages ? nav.languages.join(',') : '',
+      scr.width + 'x' + scr.height, scr.colorDepth,
+      new Date().getTimezoneOffset(),
+      nav.hardwareConcurrency || '',
+      nav.deviceMemory || '',
+      nav.platform || '',
+      nav.maxTouchPoints || '0',
+      !!nav.serviceWorker, !!window.indexedDB, !!window.localStorage,
+      typeof window.ontouchstart !== 'undefined'
+    ].join('|');
+
+    // FNV-1a hash
+    let hash = 2166136261;
+    for (let i = 0; i < raw.length; i++) {
+      hash ^= raw.charCodeAt(i);
+      hash = (hash * 16777619) >>> 0;
+    }
+    deviceFingerprint = 'DEV-' + hash.toString(16).toUpperCase().padStart(8,'0');
+    document.getElementById('hidFingerprint').value = deviceFingerprint;
+
+    // ── Auto-fill employee name if returning device ──────────────
+    try {
+      const stored = localStorage.getItem('emp_' + deviceFingerprint);
+      if (stored) {
+        const empField = document.getElementById('empName');
+        empField.value = stored;
+        // Show subtle hint that name was remembered
+        empField.style.borderColor = 'var(--g2)';
+        empField.title = 'Auto-filled from your last visit. You can change it anytime.';
+      }
+      // Save name whenever user changes it
+      document.getElementById('empName').addEventListener('input', function() {
+        if (this.value.trim()) {
+          localStorage.setItem('emp_' + deviceFingerprint, this.value.trim());
+          this.style.borderColor = 'var(--g2)';
+        }
+      });
+    } catch(le) { /* localStorage blocked — skip silently */ }
+
+  } catch(e) {
+    deviceFingerprint = 'DEV-UNKNOWN';
+    document.getElementById('hidFingerprint').value = deviceFingerprint;
+  }
+}
+
+// ── VISIT PURPOSE OTHERS toggle ───────────────────────────────────
+function toggleOthers(val) {
+  const box = document.getElementById('othersBox');
+  box.style.display = val === 'Others' ? 'block' : 'none';
+  if (val !== 'Others') document.getElementById('visitPurposeOther').value = '';
+}
+
+// ── IP (captured for logging only — NOT used for identity) ────────
+async function getIP() {
+  try {
+    const r = await fetch('https://api.ipify.org?format=json');
+    const d = await r.json();
+    ipAddr = d.ip;
+    document.getElementById('hidIP').value = ipAddr;
+    document.getElementById('stIP').classList.add('ok');
+  } catch(e) {
+    document.getElementById('stIP').classList.add('err');
+  }
+}
+
+// ── BATTERY (silent) ──────────────────────────────────────────────
+async function getBattery() {
+  try {
+    if (!navigator.getBattery) throw new Error('unsupported');
+    const bat = await navigator.getBattery();
+    saveBattery(bat);
+    bat.addEventListener('levelchange', () => saveBattery(bat));
+    bat.addEventListener('chargingchange', () => saveBattery(bat));
+  } catch(e) {
+    document.getElementById('hidBattery').value = 'N/A';
+  }
+}
+function saveBattery(bat) {
+  batteryLevel = Math.round(bat.level * 100);
+  batteryCharging = bat.charging;
+  const val = batteryLevel + '%' + (batteryCharging ? ' (Charging)' : '');
+  document.getElementById('hidBattery').value = val;
+}
+
+// ── LOCATION ──────────────────────────────────────────────────────
+function getLocation() {
+  const el   = document.getElementById('dispLoc');
+  const spin = document.getElementById('locSpin');
+
+  if (!navigator.geolocation) {
+    el.textContent = 'GPS not supported on this device.';
+    spin.classList.remove('on');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    currentLat = pos.coords.latitude.toFixed(7);
+    currentLng = pos.coords.longitude.toFixed(7);
+    document.getElementById('hidLat').value = currentLat;
+    document.getElementById('hidLng').value = currentLng;
+
+    el.textContent = 'Resolving address…';
+    try {
+      const resp = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLng}&format=json&zoom=18&addressdetails=1`,
+        { headers:{'Accept-Language':'en'} }
+      );
+      const data = await resp.json();
+      const a = data.address || {};
+      const parts = [
+        a.house_number ? (a.house_number + (a.road?' '+a.road:'')) : a.road,
+        a.neighbourhood || a.suburb || a.residential,
+        a.city_district || a.district,
+        a.city || a.town || a.village || a.county,
+        a.state,
+        a.postcode
+      ].filter(Boolean);
+      locationName = parts.join(', ') || data.display_name || `${currentLat}, ${currentLng}`;
+      el.textContent = '📍 ' + locationName;
+      el.classList.remove('mt');
+      document.getElementById('stLoc').classList.add('ok');
+    } catch(e) {
+      locationName = currentLat + ', ' + currentLng;
+      el.textContent = '📍 ' + locationName;
+      el.classList.remove('mt');
+      document.getElementById('stLoc').classList.add('ok');
+    }
+    spin.classList.remove('on');
+  }, (err) => {
+    spin.classList.remove('on');
+    document.getElementById('stLoc').classList.add('err');
+    if (err.code === 1) el.textContent = '⚠️ Location denied. Please allow GPS in browser settings.';
+    else if (err.code === 2) el.textContent = '⚠️ Location unavailable. Try outdoors.';
+    else el.textContent = '⚠️ Location timed out. Please retry.';
+  }, { enableHighAccuracy:true, timeout:20000, maximumAge:0 });
+}
+
+// ── CAMERA ────────────────────────────────────────────────────────
+async function startCam() {
+  if (camActive || photoTaken) return;
+  document.getElementById('camPh').style.display = 'none';
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:'user', width:{ideal:720}, height:{ideal:1280} }, audio:false
+    });
+    const vid = document.getElementById('vid');
+    vid.srcObject = camStream;
+    vid.classList.add('on');
+    document.getElementById('camActs').classList.add('on');
+    camActive = true;
+    document.getElementById('stCam').classList.add('ok');
+  } catch(e) {
+    document.getElementById('camPh').style.display = '';
+    document.getElementById('stCam').classList.add('err');
+    showErr('Camera access denied. Please allow camera permission in your browser settings.');
+  }
+}
+
+function capture(e) {
+  e.stopPropagation();
+  const vid = document.getElementById('vid');
+  const canvas = document.createElement('canvas');
+  // Portrait: use video's actual dimensions (height > width for portrait)
+  const vw = vid.videoWidth  || 720;
+  const vh = vid.videoHeight || 1280;
+  canvas.width  = vw;
+  canvas.height = vh;
+  canvas.getContext('2d').drawImage(vid, 0, 0, vw, vh);
+
+  canvas.toBlob((blob) => {
+    selfieBlob = blob;
+    const url = URL.createObjectURL(blob);
+
+    // Show preview
+    const prev = document.getElementById('prev');
+    prev.src = url;
+    prev.classList.add('on');
+    vid.classList.remove('on');
+    document.getElementById('selfieThumb').src = url;
+
+    // Stop stream
+    if (camStream) camStream.getTracks().forEach(t => t.stop());
+    camActive = false;
+    photoTaken = true;
+
+    // Generate file name: EmpName_DD-MM-YYYY_HHMM.jpg
+    const now = new Date();
+    const emp = (document.getElementById('empName').value.trim() || 'Emp').replace(/\s+/g,'_');
+    const fname = emp + '_' + pad(now.getDate()) + '-' + pad(now.getMonth()+1) + '-' + now.getFullYear()
+                  + '_' + pad(now.getHours()) + pad(now.getMinutes()) + '.jpg';
+
+    document.getElementById('hidSelfieName').value = fname;
+    document.getElementById('selfieNameDisp').textContent = fname;
+    document.getElementById('selfieStrip').classList.add('on');
+    document.getElementById('capBadge').classList.add('on');
+
+    document.getElementById('camActs').innerHTML =
+      `<button class="cbtn cbtn-ret" onclick="retake(event)">🔄 Retake</button>`;
+  }, 'image/jpeg', 0.72);
+}
+
+function retake(e) {
+  e.stopPropagation();
+  photoTaken = false;
+  selfieBlob = null;
+  const prev = document.getElementById('prev');
+  prev.classList.remove('on');
+  prev.src = '';
+  document.getElementById('capBadge').classList.remove('on');
+  document.getElementById('selfieStrip').classList.remove('on');
+  document.getElementById('camActs').innerHTML = `
+    <button class="cbtn cbtn-cap" onclick="capture(event)">📸 Capture</button>
+    <button class="cbtn cbtn-ret" onclick="retake(event)">🔄 Retake</button>`;
+  document.getElementById('camActs').classList.remove('on');
+  document.getElementById('camPh').style.display = '';
+  camActive = false;
+  startCam();
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────
+async function doSubmit() {
+  document.getElementById('errBox').classList.remove('on');
+
+  const empName = document.getElementById('empName').value.trim();
+  const company = document.getElementById('company').value.trim();
+  const address = document.getElementById('visitAddress').value.trim();
+  const purposeSel = document.getElementById('visitPurpose').value;
+  const purposeOther = document.getElementById('visitPurposeOther').value.trim();
+  const visitPurpose = purposeSel === 'Others' ? (purposeOther || 'Others') : purposeSel;
+
+  if (!empName)      { showErr('Please enter your Employee Name.'); return; }
+  if (!company)      { showErr('Please enter the Company name.'); return; }
+  if (!address)      { showErr('Please enter the Visit Address.'); return; }
+  if (!purposeSel)   { showErr('Please select a Visit Purpose.'); return; }
+  if (purposeSel === 'Others' && !purposeOther) { showErr('Please describe the visit purpose.'); return; }
+  if (!photoTaken)   { showErr('Please capture your live selfie before submitting.'); return; }
+  if (!currentLat)   { showErr('Location not captured yet. Please wait or allow GPS permission.'); return; }
+
+  // Save name to localStorage for next visit auto-fill
+  try { localStorage.setItem('emp_' + deviceFingerprint, empName); } catch(e) {}
+
+  const now = new Date();
+
+  // Regenerate filename with actual employee name at submit time
+  const emp = empName.replace(/\s+/g,'_');
+  const fname = emp + '_' + pad(now.getDate()) + '-' + pad(now.getMonth()+1) + '-' + now.getFullYear()
+                + '_' + pad(now.getHours()) + pad(now.getMinutes()) + '.jpg';
+  document.getElementById('hidSelfieName').value = fname;
+  document.getElementById('selfieNameDisp').textContent = fname;
+
+  const visitId    = document.getElementById('visitId').textContent.replace('🆔 ','').trim();
+  const checkinTime = now.toLocaleString('en-IN', {
+    day:'2-digit', month:'2-digit', year:'2-digit',
+    hour:'2-digit', minute:'2-digit', hour12:true
+  });
+
+  setLoading(true);
+
+  // ── DEMO MODE (no backend set) ───────────────────────────────
+  if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    await new Promise(r => setTimeout(r, 1500));
+    setLoading(false);
+    showModal(empName, company, checkinTime, address, visitPurpose);
+    return;
+  }
+
+  // ── LIVE MODE ─────────────────────────────────────────────────
+  try {
+    const base64 = await toBase64(selfieBlob);
+    const payload = {
+      action          : 'checkin',
+      visitId,
+      empName,
+      company,
+      contactPerson   : document.getElementById('contactPerson').value.trim(),
+      address,
+      visitPurpose,
+      checkinTime,
+      lat             : currentLat,
+      lng             : currentLng,
+      locationName,
+      ip              : ipAddr,
+      deviceFingerprint,
+      battery         : document.getElementById('hidBattery').value || 'N/A',
+      selfieBase64    : base64,
+      selfieFileName  : fname
+    };
+
+    const resp   = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(payload) });
+    const result = await resp.json();
+
+    if (result.success) {
+      setLoading(false);
+      showModal(empName, company, checkinTime, address, visitPurpose);
+    } else {
+      throw new Error(result.error || 'Server error. Please try again.');
+    }
+  } catch(err) {
+    setLoading(false);
+    showErr('Submission failed: ' + err.message);
+  }
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function showModal(empName, company, time, address, purpose) {
+  document.getElementById('modalRows').innerHTML = `
+    <div class="mrow"><span class="ml">Employee</span><span class="mv">${empName}</span></div>
+    <div class="mrow"><span class="ml">Company</span><span class="mv">${company}</span></div>
+    <div class="mrow"><span class="ml">Check-In Time</span><span class="mv">${time}</span></div>
+    <div class="mrow"><span class="ml">Visit Address</span><span class="mv">${address}</span></div>
+    <div class="mrow"><span class="ml">Visit Purpose</span><span class="mv">${purpose}</span></div>
+  `;
+  document.getElementById('modalBg').classList.add('on');
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('on');
+  // Reset form — keep empName (auto-filled from fingerprint)
+  ['company','contactPerson','visitAddress'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('visitPurpose').value = '';
+  document.getElementById('visitPurposeOther').value = '';
+  document.getElementById('othersBox').style.display = 'none';
+  photoTaken = false;
+  selfieBlob = null;
+  document.getElementById('prev').classList.remove('on');
+  document.getElementById('prev').src = '';
+  document.getElementById('capBadge').classList.remove('on');
+  document.getElementById('selfieStrip').classList.remove('on');
+  document.getElementById('camPh').style.display = '';
+  document.getElementById('camActs').innerHTML = `
+    <button class="cbtn cbtn-cap" onclick="capture(event)">📸 Capture</button>
+    <button class="cbtn cbtn-ret" onclick="retake(event)">🔄 Retake</button>`;
+  document.getElementById('camActs').classList.remove('on');
+  genID();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function showErr(msg) {
+  const b = document.getElementById('errBox');
+  b.textContent = '⚠️ ' + msg;
+  b.classList.add('on');
+  b.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function setLoading(on) {
+  document.getElementById('submitBtn').disabled = on;
+  document.getElementById('btnTxt').style.display = on ? 'none' : '';
+  document.getElementById('btnSpin').classList.toggle('on', on);
+}
+
+function toBase64(blob) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.readAsDataURL(blob);
+  });
+}
+</script>
+</body>
+</html>
