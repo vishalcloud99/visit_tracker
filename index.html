@@ -6,7 +6,6 @@
 <title>Visit Check-In · Sales Team</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ══ VARIABLES ══════════════════════════════════════════════════ */
 :root {
   --b1:#0a1f44; --b2:#1a4fba; --b3:#3b82f6; --b4:#bfdbfe;
   --g1:#064e3b; --g2:#059669; --g3:#34d399; --g4:#d1fae5;
@@ -16,7 +15,6 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 
-/* ══ BODY ═══════════════════════════════════════════════════════ */
 body {
   font-family:'DM Sans',sans-serif;
   min-height:100vh;
@@ -24,7 +22,7 @@ body {
   padding:0 0 60px;
 }
 
-/* ══ HEADER ═════════════════════════════════════════════════════ */
+/* ══ HEADER ═══════════════════════════════════════════════════════ */
 .hdr { padding:32px 20px 20px; text-align:center; }
 .hdr-badge {
   display:inline-flex; align-items:center; gap:8px;
@@ -56,19 +54,38 @@ body {
 .chip .dot{width:6px;height:6px;border-radius:50%;}
 .d-blue{background:var(--b3);} .d-green{background:var(--g3);} .d-yellow{background:#fbbf24;}
 
-/* ══ CARD ═══════════════════════════════════════════════════════ */
-.card {
-  background:var(--w); border-radius:24px 24px 0 0;
-  margin:0 12px; padding:28px 20px;
-  box-shadow:var(--sh); animation:slideUp .5s cubic-bezier(.34,1.2,.64,1) both;
+/* ══ TAB SWITCHER ═════════════════════════════════════════════════ */
+.tab-bar {
+  display:flex; gap:0; margin:0 12px 0;
+  background:rgba(255,255,255,.1); border-radius:16px 16px 0 0;
+  padding:6px 6px 0; backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15); border-bottom:none;
 }
-@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-.card::before {
-  content:''; display:block; width:40px; height:4px;
-  background:var(--gbd); border-radius:4px; margin:0 auto 24px;
+.tab-btn {
+  flex:1; padding:12px 10px; border:none; cursor:pointer;
+  font-family:'Nunito',sans-serif; font-size:14px; font-weight:800;
+  border-radius:12px 12px 0 0; transition:all .25s;
+  background:transparent; color:rgba(255,255,255,.55);
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  letter-spacing:.2px;
 }
+.tab-btn.active {
+  background:var(--w); color:var(--b1);
+  box-shadow:0 -4px 16px rgba(0,0,0,.12);
+}
+.tab-btn:not(.active):hover { color:rgba(255,255,255,.85); background:rgba(255,255,255,.08); }
 
-/* ══ VISIT ID ═══════════════════════════════════════════════════ */
+/* ══ CARD ═════════════════════════════════════════════════════════ */
+.card {
+  background:var(--w); border-radius:0 0 24px 24px;
+  margin:0 12px; padding:28px 20px;
+  box-shadow:var(--sh);
+}
+.tab-panel { display:none; }
+.tab-panel.active { display:block; animation:fadeIn .3s ease; }
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ VISIT ID ══════════════════════════════════════════════════════ */
 .visit-id {
   display:inline-flex; align-items:center; gap:6px;
   background:linear-gradient(135deg,var(--b1),var(--b2));
@@ -76,21 +93,21 @@ body {
   font-size:12px; font-weight:700; letter-spacing:.5px; margin-bottom:20px;
 }
 
-/* ══ DATETIME GRID ══════════════════════════════════════════════ */
+/* ══ DATETIME GRID ═════════════════════════════════════════════════ */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
-/* ══ SECTION TITLES ═════════════════════════════════════════════ */
+/* ══ SECTION TITLES ════════════════════════════════════════════════ */
 .sec {display:flex;align-items:center;gap:10px;margin-bottom:18px;}
 .sec-icon {
   width:36px;height:36px;border-radius:10px;
   display:flex;align-items:center;justify-content:center;
   font-size:17px;flex-shrink:0;
 }
-.si-blue{background:var(--b4);} .si-green{background:var(--g4);} .si-purple{background:#ede9fe;}
+.si-blue{background:var(--b4);} .si-green{background:var(--g4);} .si-purple{background:#ede9fe);}
 .sec h2{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--b1);letter-spacing:-.2px;}
 .sec p{font-size:11px;color:var(--gray);margin-top:1px;}
 
-/* ══ FORM ELEMENTS ══════════════════════════════════════════════ */
+/* ══ FORM ELEMENTS ═════════════════════════════════════════════════ */
 .fg{margin-bottom:14px;}
 .fg label {
   display:flex;align-items:center;gap:6px;
@@ -115,7 +132,6 @@ input:focus,textarea:focus,select:focus {
   background:var(--w);
 }
 
-/* auto display field */
 .af {
   display:flex;align-items:center;gap:10px;
   padding:11px 14px; border:1.5px solid var(--gbd);
@@ -129,13 +145,20 @@ input:focus,textarea:focus,select:focus {
 .spin.on{display:block;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ══ CAMERA ═════════════════════════════════════════════════════ */
+/* ══ CAMERA — SELFIE STYLE (wider, less zoom) ═══════════════════ */
 .cam-wrap {
   border:2px dashed var(--b3); border-radius:var(--rs);
   background:#eff6ff; overflow:hidden; position:relative;
-  aspect-ratio:3/4; cursor:pointer;
+  /* Changed: 4:3 ratio for normal selfie look (was 3:4 portrait) */
+  aspect-ratio:4/3; cursor:pointer;
 }
-.cam-wrap video,.cam-wrap img.prev{width:100%;height:100%;object-fit:cover;display:none;}
+.cam-wrap video,.cam-wrap img.prev{
+  width:100%; height:100%;
+  /* object-fit:contain shows full frame without cropping */
+  object-fit:contain;
+  background:#000;
+  display:none;
+}
 .cam-wrap video.on,.cam-wrap img.prev.on{display:block;}
 .cam-ph {
   position:absolute;inset:0;display:flex;flex-direction:column;
@@ -157,7 +180,6 @@ input:focus,textarea:focus,select:focus {
 .cap-badge{position:absolute;top:10px;right:10px;background:var(--g2);color:var(--w);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;display:none;}
 .cap-badge.on{display:block;}
 
-/* selfie confirm strip */
 .selfie-strip{display:none;align-items:center;gap:10px;padding:8px 14px;background:var(--g4);border-radius:var(--rs);margin-top:8px;}
 .selfie-strip.on{display:flex;}
 .s-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;border:2px solid var(--g2);}
@@ -165,7 +187,7 @@ input:focus,textarea:focus,select:focus {
 .s-info strong{display:block;color:var(--g1);font-weight:700;}
 .s-info span{color:var(--gray);}
 
-/* ══ DIVIDER ════════════════════════════════════════════════════ */
+/* ══ DIVIDER ═══════════════════════════════════════════════════════ */
 .div{height:1px;background:var(--gbd);margin:20px 0;}
 
 /* ══ ERROR ══════════════════════════════════════════════════════ */
@@ -196,6 +218,92 @@ input:focus,textarea:focus,select:focus {
 .sdot{width:7px;height:7px;border-radius:50%;background:var(--gbd);transition:background .3s;}
 .sdot.ok{background:var(--g2);}
 .sdot.err{background:var(--red);}
+
+/* ══ VIEW PANEL ═════════════════════════════════════════════════ */
+.view-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:16px; flex-wrap:wrap; gap:10px;
+}
+.view-title { font-family:'Nunito',sans-serif; font-size:17px; font-weight:900; color:var(--b1); }
+.view-sub { font-size:11px; color:var(--gray); margin-top:2px; }
+
+.filter-bar { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.filter-bar input, .filter-bar select {
+  flex:1; min-width:120px; padding:9px 12px; font-size:13px;
+}
+
+/* Device identity badge */
+.dev-badge {
+  display:flex; align-items:center; gap:8px;
+  background:linear-gradient(135deg,var(--b4),var(--g4));
+  border:1px solid var(--b3); border-radius:12px;
+  padding:10px 14px; margin-bottom:16px;
+}
+.dev-badge-icon { font-size:20px; }
+.dev-badge-info strong { display:block; font-size:12px; color:var(--b1); font-weight:700; }
+.dev-badge-info span { font-size:11px; color:var(--gray); font-family:monospace; }
+
+/* Visit cards in view panel */
+.visits-list { display:flex; flex-direction:column; gap:12px; }
+.visit-card {
+  border:1.5px solid var(--gbd); border-radius:14px;
+  overflow:hidden; background:var(--w);
+  box-shadow:0 2px 8px rgba(10,31,68,.06);
+  transition:box-shadow .2s;
+}
+.visit-card:hover { box-shadow:0 4px 16px rgba(10,31,68,.12); }
+.vc-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 14px; background:var(--glt);
+  border-bottom:1px solid var(--gbd); gap:8px;
+}
+.vc-id { font-size:11px; font-weight:700; color:var(--b2); font-family:monospace; }
+.vc-date { font-size:11px; color:var(--gray); }
+.vc-purpose {
+  font-size:10px; font-weight:700; padding:3px 10px;
+  border-radius:20px; background:var(--g4); color:var(--g1);
+  white-space:nowrap;
+}
+.vc-body { padding:12px 14px; }
+.vc-row { display:flex; gap:6px; align-items:flex-start; margin-bottom:6px; font-size:12px; }
+.vc-row:last-child { margin-bottom:0; }
+.vc-row .icon { width:16px; flex-shrink:0; font-size:13px; }
+.vc-row .label { color:var(--gray); font-weight:500; min-width:70px; flex-shrink:0; }
+.vc-row .val { color:var(--b1); font-weight:600; flex:1; word-break:break-word; }
+.vc-selfie-link {
+  display:inline-flex; align-items:center; gap:5px;
+  color:var(--b2); text-decoration:none; font-size:11px; font-weight:700;
+  padding:4px 10px; border:1px solid var(--b3); border-radius:20px;
+  margin-top:8px; transition:background .2s;
+}
+.vc-selfie-link:hover { background:var(--b4); }
+
+/* Empty state */
+.empty-state {
+  text-align:center; padding:40px 20px; color:var(--gray);
+}
+.empty-state .ei { font-size:48px; margin-bottom:12px; }
+.empty-state p { font-size:14px; font-weight:500; }
+.empty-state small { font-size:12px; opacity:.7; }
+
+/* Loading state for view */
+.view-loading {
+  text-align:center; padding:30px; color:var(--gray);
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+}
+.view-loading .spin { display:block; width:24px; height:24px; border-width:3px; }
+
+/* Stats bar */
+.stats-bar {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+  margin-bottom:16px;
+}
+.stat-box {
+  background:var(--glt); border-radius:10px; padding:10px;
+  text-align:center; border:1px solid var(--gbd);
+}
+.stat-box .sv { font-family:'Nunito',sans-serif; font-size:22px; font-weight:900; color:var(--b1); }
+.stat-box .sl { font-size:10px; color:var(--gray); font-weight:500; margin-top:2px; }
 
 /* ══ MODAL ══════════════════════════════════════════════════════ */
 .m-bg {
@@ -235,6 +343,68 @@ input:focus,textarea:focus,select:focus {
   cursor:pointer;transition:opacity .2s;
 }
 .m-close:hover{opacity:.9;}
+
+/* Refresh button */
+.refresh-btn {
+  display:flex; align-items:center; gap:5px;
+  padding:8px 14px; border:1.5px solid var(--b3); border-radius:20px;
+  background:transparent; color:var(--b2); font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:600; cursor:pointer; transition:all .2s;
+}
+.refresh-btn:hover { background:var(--b4); }
+
+/* ══ DATE FILTER ══════════════════════════════════════════════ */
+.date-filter-wrap { margin-bottom:14px; }
+.date-quick-btns {
+  display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;
+}
+.dq-btn {
+  padding:7px 13px; border:1.5px solid var(--gbd); border-radius:20px;
+  background:var(--glt); color:var(--gray);
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
+  cursor:pointer; transition:all .2s; white-space:nowrap;
+}
+.dq-btn:hover { border-color:var(--b3); color:var(--b2); background:var(--b4); }
+.dq-btn.active {
+  background:linear-gradient(135deg,var(--b1),var(--b2));
+  border-color:var(--b2); color:var(--w);
+  box-shadow:0 2px 8px rgba(26,79,186,.25);
+}
+
+/* Custom date range row */
+.date-custom-row {
+  display:none; align-items:center; gap:8px;
+  padding:10px 12px; background:var(--glt);
+  border:1.5px solid var(--b3); border-radius:var(--rs);
+  flex-wrap:wrap;
+}
+.date-custom-row.show { display:flex; }
+.date-custom-row label { font-size:11px; font-weight:600; color:var(--gray); white-space:nowrap; }
+.date-custom-row input[type=date] {
+  flex:1; min-width:110px; padding:7px 10px;
+  border:1.5px solid var(--gbd); border-radius:8px;
+  font-size:13px; color:var(--b1); background:var(--w);
+}
+.date-custom-row input[type=date]:focus { border-color:var(--b3); }
+.date-apply-btn {
+  padding:7px 16px; border:none; border-radius:8px;
+  background:var(--b2); color:var(--w);
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; transition:opacity .2s; white-space:nowrap;
+}
+.date-apply-btn:hover { opacity:.85; }
+
+/* Active date range label shown below buttons */
+.date-active-label {
+  font-size:11px; color:var(--b2); font-weight:600;
+  margin-bottom:6px; display:none; align-items:center; gap:4px;
+}
+.date-active-label.show { display:flex; }
+.date-active-label .clear-date {
+  cursor:pointer; color:var(--red); font-size:13px; line-height:1;
+  margin-left:4px;
+}
+
 </style>
 </head>
 <body>
@@ -251,153 +421,251 @@ input:focus,textarea:focus,select:focus {
   </div>
 </div>
 
+<!-- ══ TAB BAR ═════════════════════════════════════════════════ -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabCheckin" onclick="switchTab('checkin')">
+    ✅ Check-In
+  </button>
+  <button class="tab-btn" id="tabView" onclick="switchTab('view')">
+    📋 My Visits
+  </button>
+</div>
+
 <!-- ══ CARD ════════════════════════════════════════════════════ -->
 <div class="card">
 
-  <!-- Visit ID -->
-  <div class="visit-id" id="visitId">🆔 Generating…</div>
+  <!-- ════════════════════════════════════════════
+       TAB 1: CHECK-IN
+  ════════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panelCheckin">
 
-  <!-- Date & Time -->
-  <div class="grid2" style="margin-bottom:14px;">
-    <div class="fg" style="margin-bottom:0;">
-      <label>📅 Date <span class="tag ta">Auto</span></label>
-      <div class="af"><span class="af-icon">📅</span><span class="af-val" id="dispDate">—</span></div>
+    <div class="visit-id" id="visitId">🆔 Generating…</div>
+
+    <div class="grid2" style="margin-bottom:14px;">
+      <div class="fg" style="margin-bottom:0;">
+        <label>📅 Date <span class="tag ta">Auto</span></label>
+        <div class="af"><span class="af-icon">📅</span><span class="af-val" id="dispDate">—</span></div>
+      </div>
+      <div class="fg" style="margin-bottom:0;">
+        <label>🕐 Time <span class="tag ta">Auto</span></label>
+        <div class="af"><span class="af-icon">🕐</span><span class="af-val" id="dispTime">—</span></div>
+      </div>
     </div>
-    <div class="fg" style="margin-bottom:0;">
-      <label>🕐 Time <span class="tag ta">Auto</span></label>
-      <div class="af"><span class="af-icon">🕐</span><span class="af-val" id="dispTime">—</span></div>
+
+    <div class="div"></div>
+
+    <div class="sec">
+      <div class="sec-icon si-blue">👤</div>
+      <div><h2>Employee Details</h2><p>Your name for this visit</p></div>
     </div>
-  </div>
 
-  <div class="div"></div>
-
-  <!-- Employee Details -->
-  <div class="sec">
-    <div class="sec-icon si-blue">👤</div>
-    <div><h2>Employee Details</h2><p>Your name for this visit</p></div>
-  </div>
-
-  <div class="fg">
-    <label>Employee Name <span class="req">*</span></label>
-    <input type="text" id="empName" placeholder="Your full name" autocomplete="name" />
-  </div>
-
-  <div class="div"></div>
-
-  <!-- Visit Information -->
-  <div class="sec">
-    <div class="sec-icon si-green">🏢</div>
-    <div><h2>Visit Information</h2><p>Details about today's client visit</p></div>
-  </div>
-
-  <div class="fg">
-    <label>Company <span class="req">*</span></label>
-    <input type="text" id="company" placeholder="Client company name" />
-  </div>
-
-  <div class="fg">
-    <label>Contact Person</label>
-    <input type="text" id="contactPerson" placeholder="Name of person you're meeting" />
-  </div>
-
-  <div class="fg">
-    <label>Visit Address <span class="req">*</span></label>
-    <input type="text" id="visitAddress" placeholder="Full address of visit location" />
-  </div>
-
-  <div class="fg">
-    <label>Visit Purpose <span class="req">*</span></label>
-    <select id="visitPurpose" onchange="toggleOthers(this.value)">
-      <option value="">— Select Purpose —</option>
-      <option value="Lead Generation">🎯 Lead Generation</option>
-      <option value="Follow-up">🔄 Follow-up</option>
-      <option value="Presentation">📊 Presentation</option>
-      <option value="Requirement Discussion">💬 Requirement Discussion</option>
-      <option value="Payment Collection">💰 Payment Collection</option>
-      <option value="Negotiation">🤝 Negotiation</option>
-      <option value="Deal Closing">✅ Deal Closing</option>
-      <option value="Others">📝 Others</option>
-    </select>
-  </div>
-
-  <!-- Others free text — hidden unless Others selected -->
-  <div class="fg" id="othersBox" style="display:none;">
-    <label>Specify Purpose <span class="req">*</span></label>
-    <input type="text" id="visitPurposeOther" placeholder="Please describe the visit purpose…" />
-  </div>
-
-  <div class="div"></div>
-
-  <!-- Location (only visible auto field) -->
-  <div class="sec">
-    <div class="sec-icon si-green">📍</div>
-    <div><h2>Your Current Location</h2><p>Auto-detected via GPS</p></div>
-  </div>
-
-  <div class="fg">
-    <div class="af" style="align-items:flex-start;padding:12px 14px;gap:10px;min-height:52px;">
-      <span class="af-icon" style="margin-top:2px;">📍</span>
-      <span class="af-val mt wrap" id="dispLoc">Detecting your location…</span>
-      <div class="spin on" id="locSpin"></div>
+    <div class="fg">
+      <label>Employee Name <span class="req">*</span></label>
+      <input type="text" id="empName" placeholder="Your full name" autocomplete="name" />
     </div>
-  </div>
 
-  <!-- Hidden auto-captured fields (not shown to user) -->
-  <input type="hidden" id="hidLat" />
-  <input type="hidden" id="hidLng" />
-  <input type="hidden" id="hidIP" />
-  <input type="hidden" id="hidBattery" />
-  <input type="hidden" id="hidSelfieName" />
-  <input type="hidden" id="hidFingerprint" />
+    <div class="div"></div>
 
-  <div class="div"></div>
-
-  <!-- Live Selfie -->
-  <div class="sec">
-    <div class="sec-icon si-purple">📸</div>
-    <div><h2>Live Selfie <span class="req">*</span></h2><p>Front camera only · No upload option</p></div>
-  </div>
-
-  <div class="cam-wrap" id="camWrap" onclick="startCam()">
-    <video id="vid" autoplay playsinline></video>
-    <img class="prev" id="prev" alt="selfie" />
-    <div class="cam-ph" id="camPh">
-      <div class="ci">📸</div>
-      <p>Tap to Open Camera</p>
-      <small>Front-facing · Live only</small>
+    <div class="sec">
+      <div class="sec-icon si-green">🏢</div>
+      <div><h2>Visit Information</h2><p>Details about today's client visit</p></div>
     </div>
-    <div class="cam-acts" id="camActs">
-      <button class="cbtn cbtn-cap" onclick="capture(event)">📸 Capture</button>
-      <button class="cbtn cbtn-ret" onclick="retake(event)">🔄 Retake</button>
+
+    <div class="fg">
+      <label>Company <span class="req">*</span></label>
+      <input type="text" id="company" placeholder="Client company name" />
     </div>
-    <div class="cap-badge" id="capBadge">✔ Captured</div>
-  </div>
 
-  <div class="selfie-strip" id="selfieStrip">
-    <img class="s-thumb" id="selfieThumb" src="" alt="selfie preview" />
-    <div class="s-info">
-      <strong id="selfieNameDisp">—</strong>
-      <span>Selfie ready · Will be saved to Drive</span>
+    <div class="fg">
+      <label>Contact Person</label>
+      <input type="text" id="contactPerson" placeholder="Name of person you're meeting" />
     </div>
-  </div>
 
-  <div class="div"></div>
+    <div class="fg">
+      <label>Visit Address <span class="req">*</span></label>
+      <input type="text" id="visitAddress" placeholder="Full address of visit location" />
+    </div>
 
-  <!-- Error message -->
-  <div class="err" id="errBox"></div>
+    <div class="fg">
+      <label>Visit Purpose <span class="req">*</span></label>
+      <select id="visitPurpose" onchange="toggleOthers(this.value)">
+        <option value="">— Select Purpose —</option>
+        <option value="Lead Generation">🎯 Lead Generation</option>
+        <option value="Follow-up">🔄 Follow-up</option>
+        <option value="Presentation">📊 Presentation</option>
+        <option value="Requirement Discussion">💬 Requirement Discussion</option>
+        <option value="Payment Collection">💰 Payment Collection</option>
+        <option value="Negotiation">🤝 Negotiation</option>
+        <option value="Deal Closing">✅ Deal Closing</option>
+        <option value="Others">📝 Others</option>
+      </select>
+    </div>
 
-  <!-- Submit -->
-  <button class="sub-btn" id="submitBtn" onclick="doSubmit()">
-    <span id="btnTxt">✅ Submit Visit Check-In</span>
-    <div class="btn-spin" id="btnSpin"></div>
-  </button>
+    <div class="fg" id="othersBox" style="display:none;">
+      <label>Specify Purpose <span class="req">*</span></label>
+      <input type="text" id="visitPurposeOther" placeholder="Please describe the visit purpose…" />
+    </div>
 
-  <!-- Status dots -->
-  <div class="status-row">
-    <div class="st"><div class="sdot" id="stCam"></div> Camera</div>
-    <div class="st"><div class="sdot" id="stLoc"></div> Location</div>
-    <div class="st"><div class="sdot" id="stIP"></div> Network</div>
-  </div>
+    <div class="div"></div>
+
+    <div class="sec">
+      <div class="sec-icon si-green">📍</div>
+      <div><h2>Your Current Location</h2><p>Auto-detected via GPS</p></div>
+    </div>
+
+    <div class="fg">
+      <div class="af" style="align-items:flex-start;padding:12px 14px;gap:10px;min-height:52px;">
+        <span class="af-icon" style="margin-top:2px;">📍</span>
+        <span class="af-val mt wrap" id="dispLoc">Detecting your location…</span>
+        <div class="spin on" id="locSpin"></div>
+      </div>
+    </div>
+
+    <input type="hidden" id="hidLat" />
+    <input type="hidden" id="hidLng" />
+    <input type="hidden" id="hidIP" />
+    <input type="hidden" id="hidBattery" />
+    <input type="hidden" id="hidSelfieName" />
+    <input type="hidden" id="hidFingerprint" />
+
+    <div class="div"></div>
+
+    <div class="sec">
+      <div class="sec-icon" style="background:#ede9fe;">📸</div>
+      <div><h2>Live Selfie <span class="req">*</span></h2><p>Front camera · Natural selfie view</p></div>
+    </div>
+
+    <div class="cam-wrap" id="camWrap" onclick="startCam()">
+      <video id="vid" autoplay playsinline muted></video>
+      <img class="prev" id="prev" alt="selfie" />
+      <div class="cam-ph" id="camPh">
+        <div class="ci">📸</div>
+        <p>Tap to Open Camera</p>
+        <small>Front-facing · Live only</small>
+      </div>
+      <div class="cam-acts" id="camActs">
+        <button class="cbtn cbtn-cap" onclick="capture(event)">📸 Capture</button>
+        <button class="cbtn cbtn-ret" onclick="retake(event)">🔄 Retake</button>
+      </div>
+      <div class="cap-badge" id="capBadge">✔ Captured</div>
+    </div>
+
+    <div class="selfie-strip" id="selfieStrip">
+      <img class="s-thumb" id="selfieThumb" src="" alt="selfie preview" />
+      <div class="s-info">
+        <strong id="selfieNameDisp">—</strong>
+        <span>Selfie ready · Will be saved to Drive</span>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <div class="err" id="errBox"></div>
+
+    <button class="sub-btn" id="submitBtn" onclick="doSubmit()">
+      <span id="btnTxt">✅ Submit Visit Check-In</span>
+      <div class="btn-spin" id="btnSpin"></div>
+    </button>
+
+    <div class="status-row">
+      <div class="st"><div class="sdot" id="stCam"></div> Camera</div>
+      <div class="st"><div class="sdot" id="stLoc"></div> Location</div>
+      <div class="st"><div class="sdot" id="stIP"></div> Network</div>
+    </div>
+
+  </div><!-- /panelCheckin -->
+
+  <!-- ════════════════════════════════════════════
+       TAB 2: MY VISITS
+  ════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panelView">
+
+    <!-- Device identity -->
+    <div class="dev-badge">
+      <div class="dev-badge-icon">📱</div>
+      <div class="dev-badge-info">
+        <strong>My Device Visits</strong>
+        <span id="devFpDisplay">Detecting device…</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-box">
+        <div class="sv" id="statTotal">—</div>
+        <div class="sl">Total Visits</div>
+      </div>
+      <div class="stat-box">
+        <div class="sv" id="statToday">—</div>
+        <div class="sl">Today</div>
+      </div>
+      <div class="stat-box">
+        <div class="sv" id="statMonth">—</div>
+        <div class="sl">This Month</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="view-header">
+      <div>
+        <div class="view-title">Visit History</div>
+        <div class="view-sub">Showing only YOUR visits from this device</div>
+      </div>
+      <button class="refresh-btn" onclick="loadVisits()">🔄 Refresh</button>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="date-filter-wrap">
+      <div class="date-quick-btns">
+        <button class="dq-btn active" id="dqToday"     onclick="setDateFilter('today')">📅 Today</button>
+        <button class="dq-btn"        id="dqYesterday" onclick="setDateFilter('yesterday')">Yesterday</button>
+        <button class="dq-btn"        id="dqWeek"      onclick="setDateFilter('week')">This Week</button>
+        <button class="dq-btn"        id="dqMonth"     onclick="setDateFilter('month')">This Month</button>
+        <button class="dq-btn"        id="dqAll"       onclick="setDateFilter('all')">All Time</button>
+        <button class="dq-btn"        id="dqCustom"    onclick="setDateFilter('custom')">📆 Custom</button>
+      </div>
+
+      <!-- Custom range row — shown only when Custom is selected -->
+      <div class="date-custom-row" id="customRow">
+        <label>From</label>
+        <input type="date" id="customFrom" />
+        <label>To</label>
+        <input type="date" id="customTo" />
+        <button class="date-apply-btn" onclick="applyCustomRange()">Apply</button>
+      </div>
+
+      <!-- Active filter label -->
+      <div class="date-active-label" id="dateActiveLabel">
+        <span id="dateActiveTxt"></span>
+        <span class="clear-date" onclick="setDateFilter('today')" title="Reset to Today">✕</span>
+      </div>
+    </div>
+
+    <!-- Search & Purpose Filter -->
+    <div class="filter-bar">
+      <input type="text" id="filterSearch" placeholder="🔍 Search company, address…" oninput="renderVisits()" />
+      <select id="filterPurpose" onchange="renderVisits()">
+        <option value="">All Purposes</option>
+        <option value="Lead Generation">Lead Generation</option>
+        <option value="Follow-up">Follow-up</option>
+        <option value="Presentation">Presentation</option>
+        <option value="Requirement Discussion">Requirement Discussion</option>
+        <option value="Payment Collection">Payment Collection</option>
+        <option value="Negotiation">Negotiation</option>
+        <option value="Deal Closing">Deal Closing</option>
+        <option value="Others">Others</option>
+      </select>
+    </div>
+
+    <!-- List -->
+    <div id="visitsList">
+      <div class="view-loading">
+        <div class="spin" style="display:block;width:24px;height:24px;border-width:3px;"></div>
+        <p>Loading your visits…</p>
+      </div>
+    </div>
+
+  </div><!-- /panelView -->
 
 </div><!-- /card -->
 
@@ -425,6 +693,21 @@ let currentLat = '', currentLng = '';
 let batteryLevel = null, batteryCharging = false;
 let camStream = null, camActive = false, photoTaken = false;
 let selfieBlob = null;
+let allVisits = []; // Stores fetched visits for this device
+let activeDateFilter = 'today'; // Default: today
+let customFrom = null, customTo = null; // Custom date range (Date objects)
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('tabCheckin').classList.toggle('active', tab === 'checkin');
+  document.getElementById('tabView').classList.toggle('active', tab === 'view');
+  document.getElementById('panelCheckin').classList.toggle('active', tab === 'checkin');
+  document.getElementById('panelView').classList.toggle('active', tab === 'view');
+
+  if (tab === 'view' && deviceFingerprint) {
+    loadVisits();
+  }
+}
 
 // ── ON LOAD ──────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -434,7 +717,7 @@ window.addEventListener('DOMContentLoaded', () => {
   getIP();
   getBattery();
   getLocation();
-  genFingerprint(); // also auto-fills name if returning device
+  genFingerprint();
 });
 
 // ── VISIT ID ─────────────────────────────────────────────────────
@@ -458,7 +741,7 @@ function tick() {
     n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
 
-// ── DEVICE FINGERPRINT (stable unique ID per device) ─────────────
+// ── DEVICE FINGERPRINT ────────────────────────────────────────────
 function genFingerprint() {
   try {
     const nav = window.navigator;
@@ -476,7 +759,6 @@ function genFingerprint() {
       typeof window.ontouchstart !== 'undefined'
     ].join('|');
 
-    // FNV-1a hash
     let hash = 2166136261;
     for (let i = 0; i < raw.length; i++) {
       hash ^= raw.charCodeAt(i);
@@ -484,40 +766,306 @@ function genFingerprint() {
     }
     deviceFingerprint = 'DEV-' + hash.toString(16).toUpperCase().padStart(8,'0');
     document.getElementById('hidFingerprint').value = deviceFingerprint;
+    document.getElementById('devFpDisplay').textContent = deviceFingerprint;
 
-    // ── Auto-fill employee name if returning device ──────────────
     try {
       const stored = localStorage.getItem('emp_' + deviceFingerprint);
       if (stored) {
         const empField = document.getElementById('empName');
         empField.value = stored;
-        // Show subtle hint that name was remembered
         empField.style.borderColor = 'var(--g2)';
         empField.title = 'Auto-filled from your last visit. You can change it anytime.';
       }
-      // Save name whenever user changes it
       document.getElementById('empName').addEventListener('input', function() {
         if (this.value.trim()) {
           localStorage.setItem('emp_' + deviceFingerprint, this.value.trim());
           this.style.borderColor = 'var(--g2)';
         }
       });
-    } catch(le) { /* localStorage blocked — skip silently */ }
+    } catch(le) {}
 
   } catch(e) {
     deviceFingerprint = 'DEV-UNKNOWN';
     document.getElementById('hidFingerprint').value = deviceFingerprint;
+    document.getElementById('devFpDisplay').textContent = deviceFingerprint;
   }
 }
 
-// ── VISIT PURPOSE OTHERS toggle ───────────────────────────────────
+// ── LOAD VISITS (My Visits tab) ────────────────────────────────
+async function loadVisits() {
+  const listEl = document.getElementById('visitsList');
+  listEl.innerHTML = `
+    <div class="view-loading">
+      <div class="spin" style="display:block;width:24px;height:24px;border-width:3px;"></div>
+      <p>Loading your visits…</p>
+    </div>`;
+
+  // DEMO mode
+  if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    await new Promise(r => setTimeout(r, 800));
+    // Show demo data
+    allVisits = generateDemoVisits();
+    updateStats();
+    renderVisits();
+    return;
+  }
+
+  try {
+    // Fetch all data from Google Sheets via Apps Script
+    // The Apps Script needs a getVisits action — see note below
+    const url = SCRIPT_URL + '?action=getVisits&fp=' + encodeURIComponent(deviceFingerprint);
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.success) {
+      allVisits = data.visits || [];
+      updateStats();
+      renderVisits();
+    } else {
+      throw new Error(data.error || 'Failed to load');
+    }
+  } catch(e) {
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="ei">⚠️</div>
+        <p>Could not load visits</p>
+        <small>${e.message}</small>
+      </div>`;
+  }
+}
+
+// Demo visits for testing UI
+function generateDemoVisits() {
+  const now = new Date();
+  const demos = [];
+  const purposes = ['Lead Generation','Follow-up','Presentation','Deal Closing','Payment Collection'];
+  const companies = ['Reliance Industries','Tata Consultancy','Infosys Ltd','Wipro Technologies','HCL Tech'];
+  const contacts = ['Rahul Sharma','Priya Patel','Amit Singh','Sunita Gupta','Rohit Kumar'];
+  const addresses = ['BKC, Mumbai','Andheri East, Mumbai','Powai, Mumbai','Lower Parel, Mumbai','Goregaon, Mumbai'];
+
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    demos.push({
+      visitId: 'VIS-' + d.getFullYear().toString().slice(2) + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(9+i) + '0000',
+      date: pad(d.getDate()) + '-' + pad(d.getMonth()+1) + '-' + d.getFullYear(),
+      time: (9 + i) + ':30:00',
+      empName: document.getElementById('empName').value || 'Demo Employee',
+      visitPurpose: purposes[i],
+      company: companies[i],
+      contactPerson: contacts[i],
+      address: addresses[i],
+      locationName: addresses[i] + ', Maharashtra',
+      lat: (19.07 + i*0.01).toFixed(5),
+      lng: (72.87 + i*0.01).toFixed(5),
+      selfieLink: '#',
+      fingerprint: deviceFingerprint
+    });
+  }
+  return demos;
+}
+
+// ── UPDATE STATS ────────────────────────────────────────────────
+function updateStats() {
+  const today = new Date();
+  const todayStr = pad(today.getDate()) + '-' + pad(today.getMonth()+1) + '-' + today.getFullYear();
+  const monthStr = '-' + pad(today.getMonth()+1) + '-' + today.getFullYear();
+
+  document.getElementById('statTotal').textContent = allVisits.length;
+  document.getElementById('statToday').textContent = allVisits.filter(v => v.date === todayStr).length;
+  document.getElementById('statMonth').textContent = allVisits.filter(v => v.date && v.date.endsWith(monthStr)).length;
+}
+
+// ── DATE FILTER ───────────────────────────────────────────────────
+function setDateFilter(mode) {
+  activeDateFilter = mode;
+
+  // Toggle quick button active states
+  ['dqToday','dqYesterday','dqWeek','dqMonth','dqAll','dqCustom'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  const idMap = { today:'dqToday', yesterday:'dqYesterday', week:'dqWeek', month:'dqMonth', all:'dqAll', custom:'dqCustom' };
+  document.getElementById(idMap[mode]).classList.add('active');
+
+  // Show/hide custom row
+  const customRow = document.getElementById('customRow');
+  if (mode === 'custom') {
+    customRow.classList.add('show');
+    // Pre-fill with today
+    const todayStr = isoToday();
+    if (!document.getElementById('customFrom').value) document.getElementById('customFrom').value = todayStr;
+    if (!document.getElementById('customTo').value)   document.getElementById('customTo').value   = todayStr;
+    return; // Don't render yet — wait for Apply
+  } else {
+    customRow.classList.remove('show');
+    customFrom = null;
+    customTo   = null;
+  }
+
+  // Update active label
+  updateDateLabel(mode);
+  renderVisits();
+}
+
+function applyCustomRange() {
+  const f = document.getElementById('customFrom').value;
+  const t = document.getElementById('customTo').value;
+  if (!f || !t) { alert('Please select both From and To dates.'); return; }
+  // Parse as local dates (avoid timezone shift)
+  customFrom = parseLocalDate(f);
+  customTo   = parseLocalDate(t);
+  customTo.setHours(23,59,59,999); // include full end day
+  if (customFrom > customTo) { alert('From date must be before To date.'); return; }
+  updateDateLabel('custom');
+  renderVisits();
+}
+
+function updateDateLabel(mode) {
+  const lbl  = document.getElementById('dateActiveLabel');
+  const txt  = document.getElementById('dateActiveTxt');
+  const today = new Date();
+
+  const labels = {
+    today: '📅 Showing: Today · ' + today.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+    yesterday: '📅 Showing: Yesterday',
+    week: '📅 Showing: This Week',
+    month: '📅 Showing: This Month',
+    all: '📅 Showing: All Time',
+    custom: customFrom && customTo
+      ? `📅 Showing: ${fmtDate(customFrom)} → ${fmtDate(customTo)}`
+      : '📅 Custom Range'
+  };
+
+  txt.textContent = labels[mode] || '';
+  lbl.classList.toggle('show', mode !== 'today'); // hide label for default Today (it's obvious)
+}
+
+function fmtDate(d) {
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function isoToday() {
+  const n = new Date();
+  return n.getFullYear() + '-' + pad(n.getMonth()+1) + '-' + pad(n.getDate());
+}
+function parseLocalDate(str) {
+  // str is "YYYY-MM-DD"
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+// Parse visit date string "DD-MM-YYYY" → Date
+function parseVisitDate(str) {
+  if (!str) return null;
+  const parts = str.split('-');
+  if (parts.length !== 3) return null;
+  return new Date(Number(parts[2]), Number(parts[1])-1, Number(parts[0]));
+}
+
+// Check if a visit falls within the active date filter
+function visitMatchesDateFilter(v) {
+  const vDate = parseVisitDate(v.date);
+  if (!vDate) return false;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayEnd = new Date(); todayEnd.setHours(23,59,59,999);
+
+  if (activeDateFilter === 'today') {
+    return vDate >= today && vDate <= todayEnd;
+  }
+  if (activeDateFilter === 'yesterday') {
+    const yStart = new Date(today); yStart.setDate(today.getDate()-1);
+    const yEnd   = new Date(yStart); yEnd.setHours(23,59,59,999);
+    return vDate >= yStart && vDate <= yEnd;
+  }
+  if (activeDateFilter === 'week') {
+    const dow   = today.getDay(); // 0=Sun
+    const wStart = new Date(today); wStart.setDate(today.getDate() - dow);
+    return vDate >= wStart && vDate <= todayEnd;
+  }
+  if (activeDateFilter === 'month') {
+    const mStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    return vDate >= mStart && vDate <= todayEnd;
+  }
+  if (activeDateFilter === 'all') return true;
+  if (activeDateFilter === 'custom' && customFrom && customTo) {
+    return vDate >= customFrom && vDate <= customTo;
+  }
+  return true;
+}
+
+
+function renderVisits() {
+  const search = document.getElementById('filterSearch').value.toLowerCase();
+  const purpose = document.getElementById('filterPurpose').value;
+
+  let filtered = allVisits.filter(v => {
+    const matchDate    = visitMatchesDateFilter(v);
+    const matchSearch  = !search ||
+      (v.company || '').toLowerCase().includes(search) ||
+      (v.address || '').toLowerCase().includes(search) ||
+      (v.contactPerson || '').toLowerCase().includes(search) ||
+      (v.locationName || '').toLowerCase().includes(search);
+    const matchPurpose = !purpose || (v.visitPurpose || '').includes(purpose);
+    return matchDate && matchSearch && matchPurpose;
+  });
+
+  const listEl = document.getElementById('visitsList');
+
+  if (filtered.length === 0) {
+    const isDateFiltered = activeDateFilter !== 'all';
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="ei">${allVisits.length === 0 ? '📭' : '🗓️'}</div>
+        <p>${allVisits.length === 0 ? 'No visits yet' : 'No visits in this period'}</p>
+        <small>${allVisits.length === 0 ? 'Your check-ins will appear here' : isDateFiltered ? 'Try "All Time" or a different date range' : 'Try different search terms'}</small>
+      </div>`;
+    return;
+  }
+
+  const purposeColors = {
+    'Lead Generation': '#fef3c7|#92400e',
+    'Follow-up': '#dbeafe|#1e40af',
+    'Presentation': '#ede9fe|#5b21b6',
+    'Requirement Discussion': '#ecfdf5|#065f46',
+    'Payment Collection': '#fef2f2|#991b1b',
+    'Negotiation': '#fff7ed|#9a3412',
+    'Deal Closing': '#d1fae5|#064e3b',
+    'Others': '#f1f5f9|#334155'
+  };
+
+  listEl.innerHTML = filtered.map(v => {
+    const [bg, fg] = (purposeColors[v.visitPurpose] || '#f1f5f9|#334155').split('|');
+    const selfieBtn = v.selfieLink && v.selfieLink !== '#'
+      ? `<a class="vc-selfie-link" href="${v.selfieLink}" target="_blank">📸 View Selfie</a>`
+      : '';
+
+    return `
+      <div class="visit-card">
+        <div class="vc-head">
+          <div>
+            <div class="vc-id">${v.visitId || '—'}</div>
+            <div class="vc-date">📅 ${v.date || '—'} &nbsp;🕐 ${v.time || '—'}</div>
+          </div>
+          <div class="vc-purpose" style="background:${bg};color:${fg};">${v.visitPurpose || 'Visit'}</div>
+        </div>
+        <div class="vc-body">
+          <div class="vc-row"><span class="icon">🏢</span><span class="label">Company</span><span class="val">${v.company || '—'}</span></div>
+          <div class="vc-row"><span class="icon">👤</span><span class="label">Contact</span><span class="val">${v.contactPerson || '—'}</span></div>
+          <div class="vc-row"><span class="icon">📍</span><span class="label">Location</span><span class="val">${v.locationName || v.address || '—'}</span></div>
+          ${selfieBtn}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── VISIT PURPOSE OTHERS ──────────────────────────────────────────
 function toggleOthers(val) {
   const box = document.getElementById('othersBox');
   box.style.display = val === 'Others' ? 'block' : 'none';
   if (val !== 'Others') document.getElementById('visitPurposeOther').value = '';
 }
 
-// ── IP (captured for logging only — NOT used for identity) ────────
+// ── IP ────────────────────────────────────────────────────────────
 async function getIP() {
   try {
     const r = await fetch('https://api.ipify.org?format=json');
@@ -530,7 +1078,7 @@ async function getIP() {
   }
 }
 
-// ── BATTERY (silent) ──────────────────────────────────────────────
+// ── BATTERY ───────────────────────────────────────────────────────
 async function getBattery() {
   try {
     if (!navigator.getBattery) throw new Error('unsupported');
@@ -602,13 +1150,21 @@ function getLocation() {
   }, { enableHighAccuracy:true, timeout:20000, maximumAge:0 });
 }
 
-// ── CAMERA ────────────────────────────────────────────────────────
+// ── CAMERA (fixed: wider frame, no face-zoom) ─────────────────────
 async function startCam() {
   if (camActive || photoTaken) return;
   document.getElementById('camPh').style.display = 'none';
   try {
+    // Use ideal width constraints to get wider framing (like normal selfie)
+    // ideal height smaller than width prevents extreme portrait zoom
     camStream = await navigator.mediaDevices.getUserMedia({
-      video:{ facingMode:'user', width:{ideal:720}, height:{ideal:1280} }, audio:false
+      video:{
+        facingMode:'user',
+        width:{ ideal:1280 },
+        height:{ ideal:960 },
+        // Do NOT set aspectRatio or the browser may crop
+      },
+      audio:false
     });
     const vid = document.getElementById('vid');
     vid.srcObject = camStream;
@@ -627,9 +1183,9 @@ function capture(e) {
   e.stopPropagation();
   const vid = document.getElementById('vid');
   const canvas = document.createElement('canvas');
-  // Portrait: use video's actual dimensions (height > width for portrait)
-  const vw = vid.videoWidth  || 720;
-  const vh = vid.videoHeight || 1280;
+  // Use actual video stream dimensions (wider = less zoomed)
+  const vw = vid.videoWidth  || 1280;
+  const vh = vid.videoHeight || 960;
   canvas.width  = vw;
   canvas.height = vh;
   canvas.getContext('2d').drawImage(vid, 0, 0, vw, vh);
@@ -638,19 +1194,16 @@ function capture(e) {
     selfieBlob = blob;
     const url = URL.createObjectURL(blob);
 
-    // Show preview
     const prev = document.getElementById('prev');
     prev.src = url;
     prev.classList.add('on');
     vid.classList.remove('on');
     document.getElementById('selfieThumb').src = url;
 
-    // Stop stream
     if (camStream) camStream.getTracks().forEach(t => t.stop());
     camActive = false;
     photoTaken = true;
 
-    // Generate file name: EmpName_DD-MM-YYYY_HHMM.jpg
     const now = new Date();
     const emp = (document.getElementById('empName').value.trim() || 'Emp').replace(/\s+/g,'_');
     const fname = emp + '_' + pad(now.getDate()) + '-' + pad(now.getMonth()+1) + '-' + now.getFullYear()
@@ -663,7 +1216,7 @@ function capture(e) {
 
     document.getElementById('camActs').innerHTML =
       `<button class="cbtn cbtn-ret" onclick="retake(event)">🔄 Retake</button>`;
-  }, 'image/jpeg', 0.72);
+  }, 'image/jpeg', 0.80);
 }
 
 function retake(e) {
@@ -703,12 +1256,9 @@ async function doSubmit() {
   if (!photoTaken)   { showErr('Please capture your live selfie before submitting.'); return; }
   if (!currentLat)   { showErr('Location not captured yet. Please wait or allow GPS permission.'); return; }
 
-  // Save name to localStorage for next visit auto-fill
   try { localStorage.setItem('emp_' + deviceFingerprint, empName); } catch(e) {}
 
   const now = new Date();
-
-  // Regenerate filename with actual employee name at submit time
   const emp = empName.replace(/\s+/g,'_');
   const fname = emp + '_' + pad(now.getDate()) + '-' + pad(now.getMonth()+1) + '-' + now.getFullYear()
                 + '_' + pad(now.getHours()) + pad(now.getMinutes()) + '.jpg';
@@ -723,15 +1273,27 @@ async function doSubmit() {
 
   setLoading(true);
 
-  // ── DEMO MODE (no backend set) ───────────────────────────────
   if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
     await new Promise(r => setTimeout(r, 1500));
+    // Save to local demo storage for view tab
+    try {
+      const stored = JSON.parse(localStorage.getItem('visits_' + deviceFingerprint) || '[]');
+      stored.unshift({
+        visitId, empName, company,
+        contactPerson: document.getElementById('contactPerson').value.trim(),
+        address, visitPurpose,
+        date: pad(now.getDate())+'-'+pad(now.getMonth()+1)+'-'+now.getFullYear(),
+        time: pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds()),
+        locationName, lat: currentLat, lng: currentLng,
+        selfieLink: '#', fingerprint: deviceFingerprint
+      });
+      localStorage.setItem('visits_' + deviceFingerprint, JSON.stringify(stored));
+    } catch(e) {}
     setLoading(false);
     showModal(empName, company, checkinTime, address, visitPurpose);
     return;
   }
 
-  // ── LIVE MODE ─────────────────────────────────────────────────
   try {
     const base64 = await toBase64(selfieBlob);
     const payload = {
@@ -782,7 +1344,6 @@ function showModal(empName, company, time, address, purpose) {
 
 function closeModal() {
   document.getElementById('modalBg').classList.remove('on');
-  // Reset form — keep empName (auto-filled from fingerprint)
   ['company','contactPerson','visitAddress'].forEach(id => {
     document.getElementById(id).value = '';
   });
@@ -825,6 +1386,57 @@ function toBase64(blob) {
     r.readAsDataURL(blob);
   });
 }
+
+// ── LOAD DEMO VISITS FROM LOCAL STORAGE (demo mode only) ─────────
+// Override loadVisits for demo mode to also pull from localStorage
+const _origLoad = loadVisits;
+async function loadVisits() {
+  if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    const listEl = document.getElementById('visitsList');
+    listEl.innerHTML = `<div class="view-loading"><div class="spin" style="display:block;width:24px;height:24px;border-width:3px;"></div><p>Loading…</p></div>`;
+    await new Promise(r => setTimeout(r, 400));
+
+    try {
+      const stored = JSON.parse(localStorage.getItem('visits_' + deviceFingerprint) || '[]');
+      allVisits = stored.length > 0 ? stored : generateDemoVisits();
+    } catch(e) {
+      allVisits = generateDemoVisits();
+    }
+    updateStats();
+    renderVisits();
+    return;
+  }
+  _origLoad();
+}
 </script>
+
+<!-- ══ APPS SCRIPT UPGRADE NOTE ════════════════════════════════════
+  To enable live "My Visits" tab with real data, add this to your
+  Apps Script doGet() function:
+
+  function doGet(e) {
+    if (e.parameter.action === 'getVisits') {
+      const fp = e.parameter.fp || '';
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      const sheet = ss.getSheetByName('Visit Check-In Log');
+      if (!sheet) return jsonOut({ success: true, visits: [] });
+      const data = sheet.getDataRange().getValues();
+      const headers = data[0];
+      const fpCol = headers.indexOf('Device Fingerprint');
+      const visits = data.slice(1)
+        .filter(row => row[fpCol] === fp)
+        .map(row => ({
+          visitId: row[0], date: row[1], time: row[2],
+          empName: row[3], visitPurpose: row[4], company: row[5],
+          contactPerson: row[6], address: row[7], fingerprint: row[8],
+          locationName: row[11], lat: row[12], lng: row[13],
+          selfieLink: row[15]
+        }))
+        .reverse();
+      return jsonOut({ success: true, visits });
+    }
+    return jsonOut({ status: 'ok', message: 'Visit Check-In API v2 · Running ✅' });
+  }
+══════════════════════════════════════════════════════════════════ -->
 </body>
 </html>
