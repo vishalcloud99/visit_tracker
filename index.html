@@ -791,49 +791,6 @@ function genFingerprint() {
   }
 }
 
-// ── LOAD VISITS (My Visits tab) ────────────────────────────────
-async function loadVisits() {
-  const listEl = document.getElementById('visitsList');
-  listEl.innerHTML = `
-    <div class="view-loading">
-      <div class="spin" style="display:block;width:24px;height:24px;border-width:3px;"></div>
-      <p>Loading your visits…</p>
-    </div>`;
-
-  // DEMO mode
-  if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-    await new Promise(r => setTimeout(r, 800));
-    // Show demo data
-    allVisits = generateDemoVisits();
-    updateStats();
-    renderVisits();
-    return;
-  }
-
-  try {
-    // Fetch all data from Google Sheets via Apps Script
-    // The Apps Script needs a getVisits action — see note below
-    const url = SCRIPT_URL + '?action=getVisits&fp=' + encodeURIComponent(deviceFingerprint);
-    const resp = await fetch(url);
-    const data = await resp.json();
-
-    if (data.success) {
-      allVisits = data.visits || [];
-      updateStats();
-      renderVisits();
-    } else {
-      throw new Error(data.error || 'Failed to load');
-    }
-  } catch(e) {
-    listEl.innerHTML = `
-      <div class="empty-state">
-        <div class="ei">⚠️</div>
-        <p>Could not load visits</p>
-        <small>${e.message}</small>
-      </div>`;
-  }
-}
-
 // Demo visits for testing UI
 function generateDemoVisits() {
   const now = new Date();
@@ -1115,32 +1072,15 @@ function getLocation() {
     document.getElementById('hidLng').value = currentLng;
 
     el.textContent = 'Resolving address…';
-    try {
-      const resp = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLng}&format=json&zoom=18&addressdetails=1`,
-        { headers:{'Accept-Language':'en'} }
-      );
-      const data = await resp.json();
-      const a = data.address || {};
-      const parts = [
-        a.house_number ? (a.house_number + (a.road?' '+a.road:'')) : a.road,
-        a.neighbourhood || a.suburb || a.residential,
-        a.city_district || a.district,
-        a.city || a.town || a.village || a.county,
-        a.state,
-        a.postcode
-      ].filter(Boolean);
-      locationName = parts.join(', ') || data.display_name || `${currentLat}, ${currentLng}`;
-      el.textContent = '📍 ' + locationName;
-      el.classList.remove('mt');
-      document.getElementById('stLoc').classList.add('ok');
-    } catch(e) {
-      locationName = currentLat + ', ' + currentLng;
-      el.textContent = '📍 ' + locationName;
-      el.classList.remove('mt');
-      document.getElementById('stLoc').classList.add('ok');
-    }
+
+    // Try multiple geocoding services in order
+    const resolved = await reverseGeocode(currentLat, currentLng);
+    locationName = resolved;
+    el.textContent = '📍 ' + locationName;
+    el.classList.remove('mt');
+    document.getElementById('stLoc').classList.add('ok');
     spin.classList.remove('on');
+
   }, (err) => {
     spin.classList.remove('on');
     document.getElementById('stLoc').classList.add('err');
@@ -1148,6 +1088,52 @@ function getLocation() {
     else if (err.code === 2) el.textContent = '⚠️ Location unavailable. Try outdoors.';
     else el.textContent = '⚠️ Location timed out. Please retry.';
   }, { enableHighAccuracy:true, timeout:20000, maximumAge:0 });
+}
+
+async function reverseGeocode(lat, lng) {
+  // 1️⃣ Try Nominatim (OpenStreetMap)
+  try {
+    const resp = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18&addressdetails=1`,
+      { headers:{ 'Accept-Language':'en', 'User-Agent':'VisitCheckin/1.0' } }
+    );
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data && data.address) {
+        const a = data.address;
+        const parts = [
+          a.house_number ? (a.house_number + (a.road ? ' ' + a.road : '')) : a.road,
+          a.neighbourhood || a.suburb || a.residential || a.hamlet,
+          a.city_district || a.district || a.county,
+          a.city || a.town || a.village,
+          a.state,
+          a.postcode
+        ].filter(Boolean);
+        const result = parts.join(', ');
+        if (result.length > 5) return result;
+        if (data.display_name) return data.display_name;
+      }
+    }
+  } catch(e) { /* fall through */ }
+
+  // 2️⃣ Try BigDataCloud (no API key needed, works on mobile)
+  try {
+    const resp = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+    );
+    if (resp.ok) {
+      const data = await resp.json();
+      const parts = [
+        data.locality,
+        data.city || data.principalSubdivision,
+        data.countryName
+      ].filter(Boolean);
+      if (parts.length > 0) return parts.join(', ');
+    }
+  } catch(e) { /* fall through */ }
+
+  // 3️⃣ Final fallback — show coordinates
+  return `${lat}, ${lng}`;
 }
 
 // ── CAMERA (fixed: wider frame, no face-zoom) ─────────────────────
@@ -1387,15 +1373,14 @@ function toBase64(blob) {
   });
 }
 
-// ── LOAD DEMO VISITS FROM LOCAL STORAGE (demo mode only) ─────────
-// Override loadVisits for demo mode to also pull from localStorage
-const _origLoad = loadVisits;
+// ── LOAD VISITS ──────────────────────────────────────────────────
 async function loadVisits() {
-  if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-    const listEl = document.getElementById('visitsList');
-    listEl.innerHTML = `<div class="view-loading"><div class="spin" style="display:block;width:24px;height:24px;border-width:3px;"></div><p>Loading…</p></div>`;
-    await new Promise(r => setTimeout(r, 400));
+  const listEl = document.getElementById('visitsList');
+  listEl.innerHTML = `<div class="view-loading"><div class="spin" style="display:block;width:24px;height:24px;border-width:3px;"></div><p>Loading your visits…</p></div>`;
 
+  // DEMO MODE — no backend set
+  if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    await new Promise(r => setTimeout(r, 400));
     try {
       const stored = JSON.parse(localStorage.getItem('visits_' + deviceFingerprint) || '[]');
       allVisits = stored.length > 0 ? stored : generateDemoVisits();
@@ -1406,7 +1391,27 @@ async function loadVisits() {
     renderVisits();
     return;
   }
-  _origLoad();
+
+  // LIVE MODE — fetch from Apps Script
+  try {
+    const url = SCRIPT_URL + '?action=getVisits&fp=' + encodeURIComponent(deviceFingerprint);
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (data.success) {
+      allVisits = data.visits || [];
+      updateStats();
+      renderVisits();
+    } else {
+      throw new Error(data.error || 'Failed to load');
+    }
+  } catch(e) {
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="ei">⚠️</div>
+        <p>Could not load visits</p>
+        <small>${e.message}</small>
+      </div>`;
+  }
 }
 </script>
 
